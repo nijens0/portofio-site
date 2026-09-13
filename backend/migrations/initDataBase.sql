@@ -88,5 +88,5 @@ CREATE TABLE dev_project_cross_ref
 
     CONSTRAINT pk_dev_project_cross_ref PRIMARY KEY (dev_id, project_id, role),
     CONSTRAINT fk_dev_project_dev FOREIGN KEY (dev_id) REFERENCES developers (id) ON DELETE CASCADE,
-    CONSTRAINT fk_dev_project_project FOтищREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
+    CONSTRAINT fk_dev_project_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
