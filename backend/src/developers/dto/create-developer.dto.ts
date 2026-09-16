@@ -1,6 +1,6 @@
 import {IsOptional, IsString} from 'class-validator';
 
-export class CreateAdminDto {
+export class CreateDeveloperDto {
     @IsString()
     @IsOptional()
     name?: string;
