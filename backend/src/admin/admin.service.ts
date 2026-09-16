@@ -2,7 +2,7 @@ import {Injectable, ConflictException, NotFoundException, UnauthorizedException}
 import * as argon2 from 'argon2';
 import {CreateAdminDto} from './dto/create-admin.dto';
 import {UpdateAdminDto} from './dto/update-admin.dto';
-import {ChangePasswordAdminDto} from "./dto/change-password-admin.dto";
+import {ChangeAdminPasswordDto} from "./dto/change-admin-password.dto";
 import {ReadAdminDto} from './dto/read-admin.dto';
 import {PrismaService} from "../prisma/prisma.service";
 import {plainToInstance} from 'class-transformer';
@@ -10,7 +10,7 @@ import {plainToInstance} from 'class-transformer';
 @Injectable()
 export class AdminService {
 
-    constructor(private prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) {}
 
     async createAdmin(dto: CreateAdminDto) {
         const existing = await this.prisma.admin.findUnique({ where: { email: dto.email } });
@@ -46,7 +46,7 @@ export class AdminService {
         return plainToInstance(ReadAdminDto, update, {excludeExtraneousValues: true});
     }
 
-    async changePasswordAdminByEmail(email: string, dto: ChangePasswordAdminDto) {
+    async changeAdminPasswordByEmail(email: string, dto: ChangeAdminPasswordDto) {
         const existing = await this.prisma.admin.findUnique({ where: { email } });
 
         if (!existing) {
