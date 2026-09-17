@@ -1,10 +1,10 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import {ConflictException, Injectable, NotFoundException} from '@nestjs/common';
 import {PrismaService} from "../prisma/prisma.service";
 import {CreateDeveloperDto} from "./dto/create-developer.dto";
 import {plainToInstance} from "class-transformer";
 import {ReadDeveloperDto} from "./dto/read-developer.dto";
 import {UpdateDeveloperDto} from "./dto/update-developer.dto";
-import {ReadProjectDto} from "../project/dto/read-project-dto";
+import {ReadProjectDto} from "../project/dto/read-project.dto";
 
 @Injectable()
 export class DeveloperService {
@@ -12,6 +12,10 @@ export class DeveloperService {
     constructor(private readonly prisma: PrismaService) {}
 
     async createDeveloper(dto: CreateDeveloperDto) {
+
+        if (!dto.name && !dto.surname && !dto.nickname) {
+            throw new ConflictException('Name or surname or nickname is required');
+        }
 
         const developer = await this.prisma.developers.create({
             data: dto
