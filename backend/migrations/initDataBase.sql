@@ -34,7 +34,7 @@ CREATE TABLE project
     employer     TEXT,
     description  TEXT NOT NULL,
     work_started DATE NOT NULL,
-    work_ended   DATE NOT NULL,
+    work_ended   DATE,
     is_featured  BOOLEAN DEFAULT FALSE,
     git          TEXT,
 
