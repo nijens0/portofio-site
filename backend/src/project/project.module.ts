@@ -1,7 +1,6 @@
 import {Module} from "@nestjs/common";
 import {ProjectController} from "./project.controller";
-import ts from "typescript";
-import ProjectService = ts.server.ProjectService;
+import {ProjectService} from "./project.service";
 
 @Module({
     imports: [],
