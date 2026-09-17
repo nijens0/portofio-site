@@ -7,7 +7,7 @@ import {UpdateDeveloperDto} from "./dto/update-developer.dto";
 import {ReadProjectDto} from "../project/dto/read-project-dto";
 
 @Injectable()
-export class developerService {
+export class DeveloperService {
 
     constructor(private readonly prisma: PrismaService) {}
 
