@@ -29,4 +29,9 @@ export class ProjectController {
         return this.service.deleteProjectById(+id)
     }
 
+    @Delete(':id/media')
+    deleteAllProjectMediaById(@Param('id') id: string) {
+        return this.service.deleteAllProjectMediaById(+id)
+    }
+
 }
