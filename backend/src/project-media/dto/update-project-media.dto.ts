@@ -1,9 +1,10 @@
-import {IsString, IsNumber, IsOptional} from 'class-validator';
+import {IsString, IsNumber, IsOptional, IsEnum} from 'class-validator';
+import {media_type} from "../../generated/prisma/enums";
 
 export class UpdateProjectMediaDto {
-    @IsString()
+    @IsEnum(media_type)
     @IsOptional()
-    type?: string;
+    type?: media_type;
 
     @IsString()
     @IsOptional()
