@@ -24,7 +24,7 @@ export class ProjectController {
         return this.service.updateProjectById(+id, dto)
     }
 
-    @Delete()
+    @Delete(':id')
     deleteProjectById(@Param('id') id: string) {
         return this.service.deleteProjectById(+id)
     }
