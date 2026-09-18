@@ -57,4 +57,24 @@ export class ProjectService {
 
         return plainToInstance(ReadProjectDto, deleted);
     }
+
+    async deleteAllProjectMediaById(id: number) {
+        const project = await this.prisma.project.findUnique({ where: { id } });
+
+        if (!project) {
+            throw new NotFoundException(`Project with id ${id} not found`);
+        }
+
+        const batchPayload = await this.prisma.project.deleteMany({
+            where: {
+                project_media: {
+                    some: {
+                        project_id: id
+                    }
+                }
+            }
+        });
+
+        return batchPayload.count;
+    }
 }
