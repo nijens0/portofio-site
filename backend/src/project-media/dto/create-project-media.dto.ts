@@ -3,7 +3,7 @@ import {media_type} from "../../generated/prisma/enums";
 
 export class CreateProjectMediaDto {
     @IsEnum(media_type)
-    type: string;
+    type: media_type;
 
     @IsString()
     url: string;
