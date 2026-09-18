@@ -43,18 +43,19 @@ CREATE TABLE project
     CONSTRAINT uq_project_slug UNIQUE (slug)
 );
 
+CREATE TYPE media_type AS ENUM ('PHOTO', 'VIDEO', 'GIF');
+
 CREATE TABLE project_media
 (
-    id         SERIAL,
-    type       TEXT    NOT NULL,
-    url        TEXT    NOT NULL,
-    sort_order INTEGER,
-    caption    TEXT,
-    project_id INTEGER NOT NULL,
+    id                    SERIAL,
+    type media_type       NOT NULL,
+    url                   TEXT    NOT NULL,
+    sort_order            INTEGER,
+    caption               TEXT,
+    project_id            INTEGER NOT NULL,
 
     CONSTRAINT pk_project_media PRIMARY KEY (id),
-    CONSTRAINT fk_project_media_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE,
-    CONSTRAINT chk_project_media_type CHECK (type IN ('PHOTO', 'VIDEO', 'GIF'))
+    CONSTRAINT fk_project_media_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
 
 CREATE TABLE developers

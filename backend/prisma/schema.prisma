@@ -50,13 +50,13 @@ model project {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model project_media {
-  id         Int     @id(map: "pk_project_media") @default(autoincrement())
-  type       String
+  id         Int        @id(map: "pk_project_media") @default(autoincrement())
+  type       media_type
   url        String
   sort_order Int?
   caption    String?
   project_id Int
-  project    project @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_project_media_project")
+  project    project    @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_project_media_project")
 }
 
 model stack {
@@ -72,4 +72,10 @@ model stack_project_cross_ref {
   stack         stack   @relation(fields: [technology_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_stack_project_stack")
 
   @@id([project_id, technology_id], map: "pk_stack_project_cross_ref")
+}
+
+enum media_type {
+  PHOTO
+  VIDEO
+  GIF
 }
