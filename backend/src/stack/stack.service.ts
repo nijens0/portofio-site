@@ -35,6 +35,16 @@ export class StackService {
         return plainToInstance(ReadStackDto, existing);
     }
 
+    async readAllStacks() {
+        const existing = await this.prisma.stack.findMany();
+
+        if (existing.length  === 0) {
+            throw new NotFoundException("There is no stacks");
+        }
+
+        return plainToInstance(ReadStackDto, existing);
+    }
+
     async updateStackById(id: number, dto: UpdateStackDto) {
         const existing = await this.prisma.stack.findUnique({where: {id}});
 
