@@ -126,7 +126,11 @@ describe('AdminService', () => {
         });
 
         it('should throw NotFoundException if admin with this id does not exist', async () => {
+            prisma.admin.findUnique.mockResolvedValue(null);
 
+            await expect(service.readAdminById(228)).rejects.toThrow(NotFoundException);
+
+            expect(prisma.admin.findUnique).toHaveBeenCalledWith({ where: { id: 228 } });
         });
     });
 
