@@ -112,7 +112,7 @@ describe('AdminService', () => {
         email: 'newnijens@mail.com'
     }
 
-    describe('updateAdmin', async () => {
+    describe('updateAdmin', () => {
         it('should update admin and return ReadAdminDto without password_hash', async () => {
             const updatedAdmin: adminModel = { ...fakeAdmin, email: updateDto.email!}
 
@@ -135,11 +135,11 @@ describe('AdminService', () => {
         newPassword: 'newTestPassword'
     }
 
-    describe('changePassword', async () => {
+    describe('changePassword', () => {
 
     });
 
-    describe('deleteAdmin', async () => {
+    describe('deleteAdmin', () => {
 
     });
 });
