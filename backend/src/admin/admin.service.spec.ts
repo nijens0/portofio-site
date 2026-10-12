@@ -3,7 +3,7 @@ import {adminModel} from '../generated/prisma/models';
 import {CreateAdminDto} from "./dto/create-admin.dto";
 import {Test, TestingModule} from "@nestjs/testing";
 import {PrismaService} from "../prisma/prisma.service";
-import {ConflictException, NotFoundException} from "@nestjs/common";
+import {ConflictException, NotFoundException, UnauthorizedException} from "@nestjs/common";
 import * as argon2 from 'argon2';
 import {UpdateAdminDto} from "./dto/update-admin.dto";
 import {ChangeAdminPasswordDto} from "./dto/change-admin-password.dto";
@@ -11,6 +11,7 @@ import {ChangeAdminPasswordDto} from "./dto/change-admin-password.dto";
 describe('AdminService', () => {
     let service: AdminService;
     let prisma: any;
+    let fakeAdmin: adminModel;
 
     const mockPrisma = {
         admin: {
@@ -21,11 +22,13 @@ describe('AdminService', () => {
         }
     };
 
-    const fakeAdmin: adminModel = {
-        id: 1,
-        email: 'nijens@mail.com',
-        password_hash: '$argon2id$v=19$m=65536,t=3,p=4$somesaltandhash'
-    }
+    beforeAll(async () => {
+        fakeAdmin = {
+            id: 1,
+            email: 'nijens@mail.com',
+            password_hash: await argon2.hash('testPassword')
+        };
+    });
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
