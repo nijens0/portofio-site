@@ -140,6 +140,48 @@ describe('AdminService', () => {
     }
 
     describe('changePassword', () => {
+        it('should update password and return ReadAdminDto without password_hash', async () => {
+            const adminWithRealHash: adminModel = {
+                ...fakeAdmin,
+                password_hash: await argon2.hash(updatePasswordDto.currentPassword),
+            };
+
+            prisma.admin.findUnique.mockResolvedValue(fakeAdmin);
+            prisma.admin.update.mockResolvedValue(adminWithRealHash);
+
+            const result = await service.changeAdminPasswordByEmail(fakeAdmin.email, updatePasswordDto);
+
+            const hashSentToDb = prisma.admin.update.mock.calls[0][0].data.password_hash;
+
+            expect(hashSentToDb).toMatch(/^\$argon2/);
+            expect(hashSentToDb).not.toEqual(updatePasswordDto.newPassword);
+            expect(await argon2.verify(hashSentToDb, updatePasswordDto.newPassword)).toBe(true);
+            expect(await argon2.verify(hashSentToDb, updatePasswordDto.currentPassword)).toBe(false);
+
+            expect(result).not.toHaveProperty('password_hash');
+        });
+
+        it('should not update if currentPassword is wrong', async () => {
+            const adminWithRealHash: adminModel = {
+                ...fakeAdmin,
+                password_hash: await argon2.hash('someOtherPassword'),
+            };
+            prisma.admin.findUnique.mockResolvedValue(adminWithRealHash);
+
+            await expect(
+                service.changeAdminPasswordByEmail(fakeAdmin.email, updatePasswordDto),
+            ).rejects.toThrow(UnauthorizedException);
+
+            expect(prisma.admin.update).not.toHaveBeenCalled();
+        });
+
+        it('should not update if admin does not exist', async () => {
+            prisma.admin.findUnique.mockResolvedValue(null);
+
+            await expect(service.changeAdminPasswordByEmail('fakeEmail', updatePasswordDto)).rejects.toThrow(NotFoundException);
+
+            expect(prisma.admin.findUnique).toHaveBeenCalledWith({ where: { email: 'fakeEmail' } });
+        });
 
     });
 
