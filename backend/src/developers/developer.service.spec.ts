@@ -37,4 +37,34 @@ describe('DeveloperService', () => {
    });
 
    afterEach(() => jest.clearAllMocks());
+
+   const createDeveloperDto: CreateDeveloperDto = {
+       name: 'Dima',
+       surname: 'Mongolin',
+       nickname: 'nijens0'
+   };
+
+   describe('createDeveloper', () => {
+       it('should create developer and return ReadDeveloperDto', async () => {
+            prisma.developers.create.mockResolvedValue(fakeDeveloper);
+
+            await service.createDeveloper(createDeveloperDto);
+
+            expect(prisma.developers.create).toHaveBeenCalledWith({
+                data: {
+                    name: 'Dima',
+                    surname: 'Mongolin',
+                    nickname: 'nijens0'
+                }
+            });
+       });
+
+       it('should throw ConflictException if dto has empty body', async () => {
+           prisma.developers.create.mockResolvedValue(null);
+
+           await expect(service.createDeveloper({})).rejects.toThrow(ConflictException);
+
+           expect(prisma.developers.create).not.toHaveBeenCalled();
+       });
+   });
 });
