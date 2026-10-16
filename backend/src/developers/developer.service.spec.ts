@@ -67,4 +67,22 @@ describe('DeveloperService', () => {
            expect(prisma.developers.create).not.toHaveBeenCalled();
        });
    });
+
+   describe('readDeveloper', () => {
+       it('should read developer and return ReadDeveloperDto', async () => {
+            prisma.developers.findUnique.mockResolvedValue(fakeDeveloper);
+
+            const result = await service.readDeveloperById(fakeDeveloper.id);
+            expect(prisma.developers.findUnique).toHaveBeenCalledWith({where: {id: fakeDeveloper.id}});
+            expect(result).toEqual(fakeDeveloper);
+
+       });
+
+       it('should throw NotFoundException if developer does not exist', async () => {
+           prisma.developers.findUnique.mockResolvedValue(null);
+
+           await expect(service.readDeveloperById(1)).rejects.toThrow(NotFoundException);
+           expect(prisma.developers.findUnique).toHaveBeenCalledWith({where: {id: 1}});
+       });
+   });
 });
