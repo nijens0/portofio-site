@@ -88,6 +88,30 @@ describe('DeveloperService', () => {
         });
     });
 
+    const fakeDevelopers: developersModel[] = [
+        {id: 1, name: 'Dima', surname: 'Mongolin', nickname: 'nijens0'},
+        {id: 2, name: 'Mix', surname: 'Slovenian', nickname: 'mijok'},
+        {id: 3, name: 'Lexa', surname: 'Verstakov', nickname: 'e1shiy'},
+        {id: 4, name: 'Max', surname: 'Korotkov', nickname: 'xronicle'},
+        {id: 5, name: 'Maks', surname: 'Zagibax', nickname: 'vihuhol'}
+    ];
+
+    describe('readAllDevelopers', () => {
+        it('should return collection of ReadDeveloperDto', async () => {
+            prisma.developers.findMany.mockResolvedValue(fakeDevelopers);
+
+            const result = await service.readAllDevelopers();
+            expect(result).toEqual(fakeDevelopers);
+        });
+
+        it('should return empty collection of ReadDeveloperDto', async () => {
+            prisma.developers.findMany.mockResolvedValue([]);
+
+            const result = await service.readAllDevelopers();
+            expect(result).toEqual([]);
+        });
+    });
+
     const updateDeveloperDto: UpdateDeveloperDto = {name: 'Lexa'};
 
     describe('updateDeveloper', () => {
