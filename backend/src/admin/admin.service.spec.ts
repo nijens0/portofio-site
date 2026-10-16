@@ -39,7 +39,7 @@ describe('AdminService', () => {
         prisma = module.get(PrismaService);
     });
 
-    afterEach(async () => jest.clearAllMocks());
+    afterEach(() => jest.clearAllMocks());
 
     const createDto: CreateAdminDto = {
         email: 'nijens@mail.com',
