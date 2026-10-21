@@ -1,0 +1,95 @@
+import {StackController} from "./stack.controller";
+import {StackService} from "./stack.service";
+import {Test} from "@nestjs/testing";
+import {CreateStackDto} from "./dto/create-stack.dto";
+import {ReadStackDto} from "./dto/read-stack.dto";
+import {UpdateStackDto} from "./dto/update-stack";
+
+describe('StackController', () => {
+    let controller: StackController;
+    let service: jest.Mocked<StackService>;
+
+    const mockStackService = {
+        createStack: jest.fn(),
+        readStackById: jest.fn(),
+        readAllStacks: jest.fn(),
+        updateStackById: jest.fn(),
+        deleteStackById: jest.fn()
+    };
+
+    beforeEach(async () => {
+        const module = await Test.createTestingModule({
+            controllers: [StackController],
+            providers: [
+                {provide: StackService, useValue: mockStackService},
+            ]
+        }).compile();
+
+        controller = module.get(StackController);
+        service = module.get(StackService);
+    });
+
+    afterEach(() => jest.clearAllMocks());
+
+    it('should be defined', () => {
+        expect(controller).toBeDefined();
+    });
+
+    describe('POST /stack', () => {
+        it('should create stack', async () => {
+            const dto: CreateStackDto = {technology: 'NestJS'};
+            const created: ReadStackDto = {id: 1, ...dto};
+            service.createStack.mockResolvedValue(created);
+
+            await expect(controller.createStack(dto)).resolves.toEqual(created);
+            expect(service.createStack).toHaveBeenCalledWith(dto);
+        });
+    });
+
+    describe('GET /stack/:id', () => {
+        it('should get stack', async () => {
+            const returned: ReadStackDto = {id: 1, technology: 'NestJS'};
+            service.readStackById.mockResolvedValue(returned);
+
+            await expect(controller.readStack(String(returned.id))).resolves.toEqual(returned);
+            expect(service.readStackById).toHaveBeenCalledWith(returned.id);
+        });
+    });
+
+    describe('GET /stack', () => {
+        it('should get all stacks', async () => {
+            const returned: ReadStackDto[] = [
+                {id: 1, technology: 'NestJS'},
+                {id: 2, technology: 'Prisma'},
+                {id: 3, technology: 'PostgreSQL'},
+                {id: 4, technology: 'React'},
+                {id: 5, technology: 'Docker'}
+            ];
+            service.readAllStacks.mockResolvedValue(returned);
+
+            await expect(controller.readAllStacks()).resolves.toEqual(returned);
+            expect(service.readAllStacks).toHaveBeenCalled();
+        });
+    });
+
+    describe('PATCH /stack/:id', () => {
+        it('should update stack by id', async () => {
+            const dto: UpdateStackDto = {technology: 'Express'};
+            const updated: ReadStackDto = {id: 1, technology: 'Express'};
+            service.updateStackById.mockResolvedValue(updated);
+
+            await expect(controller.updateStackById(String(updated.id), dto)).resolves.toEqual(updated);
+            expect(service.updateStackById).toHaveBeenCalledWith(updated.id, dto);
+        });
+    });
+
+    describe('DELETE /stack/:id', () => {
+        it('should delete stack by id', async () => {
+            const returned: ReadStackDto = {id: 1, technology: 'NestJS'};
+            service.deleteStackById.mockResolvedValue(returned);
+
+            await expect(controller.deleteStackById(String(returned.id))).resolves.toEqual(returned);
+            expect(service.deleteStackById).toHaveBeenCalledWith(returned.id);
+        });
+    });
+});

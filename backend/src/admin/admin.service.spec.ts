@@ -39,7 +39,7 @@ describe('AdminService', () => {
         prisma = module.get(PrismaService);
     });
 
-    afterEach(async () => jest.clearAllMocks());
+    afterEach(() => jest.clearAllMocks());
 
     const createDto: CreateAdminDto = {
         email: 'nijens@mail.com',
@@ -189,6 +189,21 @@ describe('AdminService', () => {
     });
 
     describe('deleteAdmin', () => {
+        it('should delete admin if exists', async () => {
+            prisma.admin.findUnique.mockResolvedValue(fakeAdmin);
+            prisma.admin.delete.mockResolvedValue(fakeAdmin as Omit<adminModel, 'password_hash'>);
 
+            await service.deleteAdminById(fakeAdmin.id);
+            expect(prisma.admin.findUnique).toHaveBeenCalledWith({ where: { id: fakeAdmin.id } });
+            expect(prisma.admin.delete).toHaveBeenCalledWith({where: {id: fakeAdmin.id}});
+        });
+
+        it('should throw NotFoundException if admin does not exist', async () => {
+            prisma.admin.findUnique.mockResolvedValue(null);
+
+            await expect(service.deleteAdminById(228)).rejects.toThrow(NotFoundException);
+            expect(prisma.admin.findUnique).toHaveBeenCalledWith({ where: { id: 228 } });
+            expect(prisma.admin.delete).not.toHaveBeenCalled();
+        });
     });
 });
