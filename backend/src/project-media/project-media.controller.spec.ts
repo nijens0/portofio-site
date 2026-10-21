@@ -69,4 +69,18 @@ describe('ProjectMediaController', () => {
             expect(service.readProjectMediaById).toHaveBeenCalledWith(returned.id);
         });
     });
+
+    describe('GET /project-media', () => {
+        it("should get all media by project's id", async () => {
+            const returned: ReadProjectMediaDto[] = [
+                {id: 1, type: media_type.PHOTO, url: "url", sort_order: 1, caption: "main page", project_id: 1},
+                {id: 2, type: media_type.VIDEO, url: "url", sort_order: 2, caption: "demo", project_id: 1},
+                {id: 3, type: media_type.GIF, url: "url", project_id: 1}
+            ];
+            service.readAllProjectMediaByProjectId.mockResolvedValue(returned);
+
+            await expect(controller.readAllProjectMediaById("1")).resolves.toEqual(returned);
+            expect(service.readAllProjectMediaByProjectId).toHaveBeenCalledWith(1);
+        });
+    });
 });
