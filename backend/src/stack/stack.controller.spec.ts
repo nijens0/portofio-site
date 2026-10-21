@@ -45,4 +45,14 @@ describe('StackController', () => {
             expect(service.createStack).toHaveBeenCalledWith(dto);
         });
     });
+
+    describe('GET /stack/:id', () => {
+        it('should get stack', async () => {
+            const returned: ReadStackDto = {id: 1, technology: 'NestJS'};
+            service.readStackById.mockResolvedValue(returned);
+
+            await expect(controller.readStack(String(returned.id))).resolves.toEqual(returned);
+            expect(service.readStackById).toHaveBeenCalledWith(returned.id);
+        });
+    });
 });
