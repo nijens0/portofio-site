@@ -101,4 +101,21 @@ describe('ProjectMediaController', () => {
             expect(service.updateProjectMediaById).toHaveBeenCalledWith(updated.id, dto);
         });
     });
+
+    describe('DELETE /project-media/:id', () => {
+        it('should delete project media by id', async () => {
+            const returned: ReadProjectMediaDto = {
+                id: 1,
+                type: media_type.PHOTO,
+                url: "url",
+                sort_order: 1,
+                caption: "main page",
+                project_id: 1
+            };
+            service.deleteProjectMediaById.mockResolvedValue(returned);
+
+            await expect(controller.deleteProjectMediaById(String(returned.id))).resolves.toEqual(returned);
+            expect(service.deleteProjectMediaById).toHaveBeenCalledWith(returned.id);
+        });
+    });
 });
