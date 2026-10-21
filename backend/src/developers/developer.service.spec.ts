@@ -5,6 +5,7 @@ import {PrismaService} from "../prisma/prisma.service";
 import {CreateDeveloperDto} from "./dto/create-developer.dto";
 import {ConflictException, NotFoundException} from "@nestjs/common";
 import {UpdateDeveloperDto} from "./dto/update-developer.dto";
+import {ReadProjectDto} from "../project/dto/read-project.dto";
 
 describe('DeveloperService', () => {
     let service: DeveloperService;
@@ -18,6 +19,9 @@ describe('DeveloperService', () => {
             findMany: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+        },
+        project: {
+            findMany: jest.fn()
         }
     };
 
@@ -152,5 +156,79 @@ describe('DeveloperService', () => {
             await expect(service.deleteDeveloperById(fakeDeveloper.id)).rejects.toThrow(NotFoundException);
             expect(prisma.developers.delete).not.toHaveBeenCalled();
         })
+    });
+
+    const project: ReadProjectDto[] = [
+        {
+            id: 1,
+            name: "GazpromNeft Vostok shift-scheduler",
+            slug: "GNV-WEB",
+            preview_url: "url",
+            description: "frontend for shift scheduler system",
+            work_started: new Date('2026-04-20'),
+            is_featured: false,
+            git: "https://github.com/nijens0"
+        },
+        {
+            id: 2,
+            name: "Portfolio site",
+            slug: "portfolio",
+            preview_url: "url",
+            description: "fullstack project 'Portfolio site'",
+            work_started: new Date('2026-08-02'),
+            is_featured: false,
+            git: "https://github.com/nijens0"
+        },
+        {
+            id: 3,
+            name: "scorm weigh batcher",
+            slug: "scorm-weigh-batcher",
+            preview_url: "",
+            description: "",
+            work_started: new Date('2026-09-16'),
+            is_featured: false,
+            git: "https://github.com/nijens0"
+        },
+    ];
+
+    describe('getDevelopersProjectById', () => {
+        it('should return projects by id', async () => {
+            prisma.developers.findUnique.mockResolvedValue(fakeDeveloper);
+            prisma.project.findMany.mockResolvedValue(project);
+
+            await service.getDeveloperProjectsById(fakeDeveloper.id);
+            expect(prisma.developers.findUnique).toHaveBeenCalledWith({where: {id: fakeDeveloper.id}});
+            expect(prisma.project.findMany).toHaveBeenCalledWith({
+                where: {
+                    dev_project_cross_ref: {
+                        some: {dev_id: fakeDeveloper.id}
+                    }
+                }
+            });
+        });
+
+        it('should return empty collection if developer has no projects', async () => {
+            prisma.developers.findUnique.mockResolvedValue(fakeDeveloper);
+            prisma.project.findMany.mockResolvedValue([]);
+
+            const result = await service.getDeveloperProjectsById(fakeDeveloper.id);
+            expect(prisma.developers.findUnique).toHaveBeenCalledWith({where: {id: fakeDeveloper.id}});
+            expect(prisma.project.findMany).toHaveBeenCalledWith({
+                where: {
+                    dev_project_cross_ref: {
+                        some: {dev_id: fakeDeveloper.id}
+                    }
+                }
+            });
+            expect(result).toEqual([]);
+        });
+
+        it('should throw NotFoundException if developer does not exist', async () => {
+            prisma.developers.findUnique.mockResolvedValue(null);
+
+            await expect(service.getDeveloperProjectsById(fakeDeveloper.id)).rejects.toThrow(NotFoundException);
+
+            expect(prisma.project.findMany).not.toHaveBeenCalled();
+        });
     });
 });
