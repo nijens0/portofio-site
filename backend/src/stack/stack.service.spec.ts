@@ -136,4 +136,23 @@ describe('StackService', () => {
             expect(prisma.stack.update).not.toHaveBeenCalled();
         });
     });
+
+    describe('deleteStack', () => {
+        it('should delete stack if exists', async () => {
+            prisma.stack.findUnique.mockResolvedValue(fakeStack);
+            prisma.stack.delete.mockResolvedValue(fakeStack);
+
+            const result = await service.deleteStackById(fakeStack.id);
+            expect(prisma.stack.findUnique).toHaveBeenCalledWith({where: {id: fakeStack.id}});
+            expect(prisma.stack.delete).toHaveBeenCalledWith({where: {id: fakeStack.id}});
+            expect(result).toEqual(fakeStack);
+        });
+
+        it('should throw NotFoundException if stack does not exist', async () => {
+            prisma.stack.findUnique.mockResolvedValue(null);
+
+            await expect(service.deleteStackById(fakeStack.id)).rejects.toThrow(NotFoundException);
+            expect(prisma.stack.delete).not.toHaveBeenCalled();
+        });
+    });
 });
