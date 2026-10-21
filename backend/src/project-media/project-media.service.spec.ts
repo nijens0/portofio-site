@@ -107,4 +107,42 @@ describe('ProjectMediaService', () => {
             expect(prisma.project_media.findUnique).toHaveBeenCalledWith({where: {id: 228}});
         });
     });
+
+    const fakeProjectMediaCollection: project_mediaModel[] = [
+        {id: 1, type: media_type.PHOTO, url: "url", sort_order: 1, caption: "main page", project_id: 1},
+        {id: 2, type: media_type.VIDEO, url: "url", sort_order: 2, caption: "demo", project_id: 1},
+        {id: 3, type: media_type.GIF, url: "url", sort_order: null, caption: null, project_id: 1}
+    ];
+
+    describe('readAllProjectMediaByProjectId', () => {
+        it('should return collection of ReadProjectMediaDto', async () => {
+            prisma.project.findUnique.mockResolvedValue(fakeProject);
+            prisma.project_media.findMany.mockResolvedValue(fakeProjectMediaCollection);
+
+            const result = await service.readAllProjectMediaByProjectId(fakeProject.id);
+            expect(prisma.project.findUnique).toHaveBeenCalledWith({where: {id: fakeProject.id}});
+            expect(prisma.project_media.findMany).toHaveBeenCalledWith({
+                where: {
+                    project_id: fakeProject.id
+                }
+            });
+            expect(result).toEqual(fakeProjectMediaCollection);
+        });
+
+        it('should return empty collection if project has no media', async () => {
+            prisma.project.findUnique.mockResolvedValue(fakeProject);
+            prisma.project_media.findMany.mockResolvedValue([]);
+
+            const result = await service.readAllProjectMediaByProjectId(fakeProject.id);
+            expect(result).toEqual([]);
+        });
+
+        it('should throw NotFoundException if project does not exist', async () => {
+            prisma.project.findUnique.mockResolvedValue(null);
+
+            await expect(service.readAllProjectMediaByProjectId(fakeProject.id)).rejects.toThrow(NotFoundException);
+
+            expect(prisma.project_media.findMany).not.toHaveBeenCalled();
+        });
+    });
 });
