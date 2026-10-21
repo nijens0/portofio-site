@@ -91,4 +91,23 @@ describe('ProjectController', () => {
             expect(service.updateProjectById).toHaveBeenCalledWith(updated.id, dto);
         });
     });
+
+    describe('DELETE /projects/:id', () => {
+        it('should delete project by id', async () => {
+            const returned: ReadProjectDto = {
+                id: 1,
+                name: "Portfolio site",
+                slug: "portfolio",
+                preview_url: "url",
+                description: "fullstack project 'Portfolio site'",
+                work_started: new Date('2026-08-02'),
+                is_featured: false,
+                git: "https://github.com/nijens0"
+            };
+            service.deleteProjectById.mockResolvedValue(returned);
+
+            await expect(controller.deleteProjectById(String(returned.id))).resolves.toEqual(returned);
+            expect(service.deleteProjectById).toHaveBeenCalledWith(returned.id);
+        });
+    });
 });
