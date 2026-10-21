@@ -71,4 +71,24 @@ describe('ProjectController', () => {
             expect(service.readProjectById).toHaveBeenCalledWith(returned.id);
         });
     });
+
+    describe('PATCH /projects/:id', () => {
+        it('should update project by id', async () => {
+            const dto: UpdateProjectDto = {is_featured: true};
+            const updated: ReadProjectDto = {
+                id: 1,
+                name: "Portfolio site",
+                slug: "portfolio",
+                preview_url: "url",
+                description: "fullstack project 'Portfolio site'",
+                work_started: new Date('2026-08-02'),
+                is_featured: true,
+                git: "https://github.com/nijens0"
+            };
+            service.updateProjectById.mockResolvedValue(updated);
+
+            await expect(controller.updateProjectById(String(updated.id), dto)).resolves.toEqual(updated);
+            expect(service.updateProjectById).toHaveBeenCalledWith(updated.id, dto);
+        });
+    });
 });
