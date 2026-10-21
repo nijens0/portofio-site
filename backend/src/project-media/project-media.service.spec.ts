@@ -176,4 +176,23 @@ describe('ProjectMediaService', () => {
             expect(prisma.project_media.update).not.toHaveBeenCalled();
         });
     });
+
+    describe('deleteProjectMedia', () => {
+        it('should delete project media if exists', async () => {
+            prisma.project_media.findUnique.mockResolvedValue(fakeProjectMedia);
+            prisma.project_media.delete.mockResolvedValue(fakeProjectMedia);
+
+            const result = await service.deleteProjectMediaById(fakeProjectMedia.id);
+            expect(prisma.project_media.findUnique).toHaveBeenCalledWith({where: {id: fakeProjectMedia.id}});
+            expect(prisma.project_media.delete).toHaveBeenCalledWith({where: {id: fakeProjectMedia.id}});
+            expect(result).toEqual(fakeProjectMedia);
+        });
+
+        it('should throw NotFoundException if project media does not exist', async () => {
+            prisma.project_media.findUnique.mockResolvedValue(null);
+
+            await expect(service.deleteProjectMediaById(fakeProjectMedia.id)).rejects.toThrow(NotFoundException);
+            expect(prisma.project_media.delete).not.toHaveBeenCalled();
+        });
+    });
 });
