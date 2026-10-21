@@ -38,4 +38,33 @@ describe('StackService', () => {
     });
 
     afterEach(() => jest.clearAllMocks());
+
+    const createStackDto: CreateStackDto = {
+        technology: 'NestJS'
+    };
+
+    describe('createStack', () => {
+        it('should create stack and return ReadStackDto', async () => {
+            prisma.stack.findUnique.mockResolvedValue(null);
+            prisma.stack.create.mockResolvedValue(fakeStack);
+
+            const result = await service.createStack(createStackDto);
+
+            expect(prisma.stack.findUnique).toHaveBeenCalledWith({where: {technology: createStackDto.technology}});
+            expect(prisma.stack.create).toHaveBeenCalledWith({
+                data: {
+                    technology: 'NestJS'
+                }
+            });
+            expect(result).toEqual(fakeStack);
+        });
+
+        it('should throw ConflictException if stack with this technology already exists', async () => {
+            prisma.stack.findUnique.mockResolvedValue(fakeStack);
+
+            await expect(service.createStack(createStackDto)).rejects.toThrow(ConflictException);
+
+            expect(prisma.stack.create).not.toHaveBeenCalled();
+        });
+    });
 });
