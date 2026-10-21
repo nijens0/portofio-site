@@ -135,4 +135,22 @@ describe('DeveloperService', () => {
             expect(prisma.developers.update).not.toHaveBeenCalled();
         });
     });
+
+    describe('deleteDeveloper', () => {
+        it('should delete developer if exists', async () => {
+            prisma.developers.findUnique.mockResolvedValue(fakeDeveloper);
+            prisma.developers.delete.mockResolvedValue(fakeDeveloper);
+
+            await service.deleteDeveloperById(fakeDeveloper.id);
+            expect(prisma.developers.findUnique).toHaveBeenCalledWith({where: {id: fakeDeveloper.id}});
+            expect(prisma.developers.delete).toHaveBeenCalledWith({where: {id: fakeDeveloper.id}});
+        });
+
+        it('should throw NotFoundException if developer does not exist', async () => {
+            prisma.developers.findUnique.mockResolvedValue(null);
+
+            await expect(service.deleteDeveloperById(fakeDeveloper.id)).rejects.toThrow(NotFoundException);
+            expect(prisma.developers.delete).not.toHaveBeenCalled();
+        })
+    });
 });
