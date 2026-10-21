@@ -82,4 +82,14 @@ describe('StackController', () => {
             expect(service.updateStackById).toHaveBeenCalledWith(updated.id, dto);
         });
     });
+
+    describe('DELETE /stack/:id', () => {
+        it('should delete stack by id', async () => {
+            const returned: ReadStackDto = {id: 1, technology: 'NestJS'};
+            service.deleteStackById.mockResolvedValue(returned);
+
+            await expect(controller.deleteStackById(String(returned.id))).resolves.toEqual(returned);
+            expect(service.deleteStackById).toHaveBeenCalledWith(returned.id);
+        });
+    });
 });
