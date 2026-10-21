@@ -69,4 +69,21 @@ describe('ProjectService', () => {
             expect(result).toEqual(fakeProject);
         });
     });
+
+    describe('readProject', () => {
+        it('should read project and return ReadProjectDto', async () => {
+            prisma.project.findUnique.mockResolvedValue(fakeProject);
+
+            const result = await service.readProjectById(fakeProject.id);
+            expect(prisma.project.findUnique).toHaveBeenCalledWith({where: {id: fakeProject.id}});
+            expect(result).toEqual(fakeProject);
+        });
+
+        it('should throw NotFoundException if project does not exist', async () => {
+            prisma.project.findUnique.mockResolvedValue(null);
+
+            await expect(service.readProjectById(228)).rejects.toThrow(NotFoundException);
+            expect(prisma.project.findUnique).toHaveBeenCalledWith({where: {id: 228}});
+        });
+    });
 });
