@@ -67,4 +67,21 @@ describe('StackService', () => {
             expect(prisma.stack.create).not.toHaveBeenCalled();
         });
     });
+
+    describe('readStack', () => {
+        it('should read stack and return ReadStackDto', async () => {
+            prisma.stack.findUnique.mockResolvedValue(fakeStack);
+
+            const result = await service.readStackById(fakeStack.id);
+            expect(prisma.stack.findUnique).toHaveBeenCalledWith({where: {id: fakeStack.id}});
+            expect(result).toEqual(fakeStack);
+        });
+
+        it('should throw NotFoundException if stack does not exist', async () => {
+            prisma.stack.findUnique.mockResolvedValue(null);
+
+            await expect(service.readStackById(228)).rejects.toThrow(NotFoundException);
+            expect(prisma.stack.findUnique).toHaveBeenCalledWith({where: {id: 228}});
+        });
+    });
 });
