@@ -1,6 +1,9 @@
 import {DeveloperController} from "./developer.controller";
 import {DeveloperService} from "./developer.service";
 import {Test} from "@nestjs/testing";
+import {CreateDeveloperDto} from "./dto/create-developer.dto";
+import {ReadDeveloperDto} from "./dto/read-developer.dto";
+import {UpdateDeveloperDto} from "./dto/update-developer.dto";
 
 describe('DeveloperController', () => {
     let controller: DeveloperController;
