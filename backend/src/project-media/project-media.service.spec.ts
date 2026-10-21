@@ -145,4 +145,35 @@ describe('ProjectMediaService', () => {
             expect(prisma.project_media.findMany).not.toHaveBeenCalled();
         });
     });
+
+    const updateProjectMediaDto: UpdateProjectMediaDto = {
+        caption: "new main page",
+        project_id: 1
+    };
+
+    describe('updateProjectMedia', () => {
+        it('should update project media and return ReadProjectMediaDto', async () => {
+            const updatedProjectMedia: project_mediaModel = {...fakeProjectMedia, ...updateProjectMediaDto};
+
+            prisma.project_media.findUnique.mockResolvedValue(fakeProjectMedia);
+            prisma.project_media.update.mockResolvedValue(updatedProjectMedia);
+
+            const result = await service.updateProjectMediaById(fakeProjectMedia.id, updateProjectMediaDto);
+
+            expect(prisma.project_media.findUnique).toHaveBeenCalledWith({where: {id: fakeProjectMedia.id}});
+            expect(prisma.project_media.update).toHaveBeenCalledWith({
+                where: {id: fakeProjectMedia.id},
+                data: updateProjectMediaDto
+            });
+            expect(result).toEqual(updatedProjectMedia);
+        });
+
+        it('should throw NotFoundException if project media does not exist', async () => {
+            prisma.project_media.findUnique.mockResolvedValue(null);
+
+            await expect(service.updateProjectMediaById(fakeProjectMedia.id, updateProjectMediaDto))
+                .rejects.toThrow(NotFoundException);
+            expect(prisma.project_media.update).not.toHaveBeenCalled();
+        });
+    });
 });
