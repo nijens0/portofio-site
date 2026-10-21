@@ -117,4 +117,23 @@ describe('ProjectService', () => {
             expect(prisma.project.update).not.toHaveBeenCalled();
         });
     });
+
+    describe('deleteProject', () => {
+        it('should delete project if exists', async () => {
+            prisma.project.findUnique.mockResolvedValue(fakeProject);
+            prisma.project.delete.mockResolvedValue(fakeProject);
+
+            const result = await service.deleteProjectById(fakeProject.id);
+            expect(prisma.project.findUnique).toHaveBeenCalledWith({where: {id: fakeProject.id}});
+            expect(prisma.project.delete).toHaveBeenCalledWith({where: {id: fakeProject.id}});
+            expect(result).toEqual(fakeProject);
+        });
+
+        it('should throw NotFoundException if project does not exist', async () => {
+            prisma.project.findUnique.mockResolvedValue(null);
+
+            await expect(service.deleteProjectById(fakeProject.id)).rejects.toThrow(NotFoundException);
+            expect(prisma.project.delete).not.toHaveBeenCalled();
+        });
+    });
 });
