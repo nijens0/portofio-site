@@ -53,4 +53,19 @@ describe('DeveloperController', () => {
             expect(service.readDeveloperById).toHaveBeenCalledWith(returned.id);
         })
     });
+
+    describe('GET /developers', () => {
+        it('should get all developers', async () => {
+           const returned: ReadDeveloperDto[] = [
+               {id: 1, name: 'Dima', surname: 'Mongolin', nickname: 'nijens0'},
+               {id: 2, name: 'Mix', surname: 'Slovenian', nickname: 'mijok'},
+               {id: 3, name: 'Lexa', surname: 'Verstakov', nickname: 'e1shiy'},
+               {id: 4, name: 'Max', surname: 'Korotkov', nickname: 'xronicle'},
+               {id: 5, name: 'Maks', surname: 'Zagibax', nickname: 'vihuhol'}
+           ];
+           service.readAllDevelopers.mockResolvedValue(returned);
+
+           await expect(controller.readAllDevelopers()).resolves.toEqual(returned);
+        });
+    });
 });
