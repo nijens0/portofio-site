@@ -84,4 +84,28 @@ describe('StackService', () => {
             expect(prisma.stack.findUnique).toHaveBeenCalledWith({where: {id: 228}});
         });
     });
+
+    const fakeStacks: stackModel[] = [
+        {id: 1, technology: 'NestJS'},
+        {id: 2, technology: 'Prisma'},
+        {id: 3, technology: 'PostgreSQL'},
+        {id: 4, technology: 'React'},
+        {id: 5, technology: 'Docker'}
+    ];
+
+    describe('readAllStacks', () => {
+        it('should return collection of ReadStackDto', async () => {
+            prisma.stack.findMany.mockResolvedValue(fakeStacks);
+
+            const result = await service.readAllStacks();
+            expect(prisma.stack.findMany).toHaveBeenCalled();
+            expect(result).toEqual(fakeStacks);
+        });
+
+        it('should throw NotFoundException if there are no stacks', async () => {
+            prisma.stack.findMany.mockResolvedValue([]);
+
+            await expect(service.readAllStacks()).rejects.toThrow(NotFoundException);
+        });
+    });
 });
