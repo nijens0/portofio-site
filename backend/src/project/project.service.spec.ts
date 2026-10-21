@@ -86,4 +86,35 @@ describe('ProjectService', () => {
             expect(prisma.project.findUnique).toHaveBeenCalledWith({where: {id: 228}});
         });
     });
+
+    const updateProjectDto: UpdateProjectDto = {
+        description: "fullstack project 'Portfolio site' on NestJS",
+        is_featured: true
+    };
+
+    describe('updateProject', () => {
+        it('should update project and return ReadProjectDto', async () => {
+            const updatedProject: projectModel = {...fakeProject, ...updateProjectDto};
+
+            prisma.project.findUnique.mockResolvedValue(fakeProject);
+            prisma.project.update.mockResolvedValue(updatedProject);
+
+            const result = await service.updateProjectById(fakeProject.id, updateProjectDto);
+
+            expect(prisma.project.findUnique).toHaveBeenCalledWith({where: {id: fakeProject.id}});
+            expect(prisma.project.update).toHaveBeenCalledWith({
+                where: {id: fakeProject.id},
+                data: updateProjectDto
+            });
+            expect(result).toEqual(updatedProject);
+        });
+
+        it('should throw NotFoundException if project does not exist', async () => {
+            prisma.project.findUnique.mockResolvedValue(null);
+
+            await expect(service.updateProjectById(fakeProject.id, updateProjectDto))
+                .rejects.toThrow(NotFoundException);
+            expect(prisma.project.update).not.toHaveBeenCalled();
+        });
+    });
 });
