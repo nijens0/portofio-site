@@ -108,4 +108,32 @@ describe('StackService', () => {
             await expect(service.readAllStacks()).rejects.toThrow(NotFoundException);
         });
     });
+
+    const updateStackDto: UpdateStackDto = {technology: 'Express'};
+
+    describe('updateStack', () => {
+        it('should update stack and return ReadStackDto', async () => {
+            const updatedStack: stackModel = {...fakeStack, ...updateStackDto};
+
+            prisma.stack.findUnique.mockResolvedValue(fakeStack);
+            prisma.stack.update.mockResolvedValue(updatedStack);
+
+            const result = await service.updateStackById(fakeStack.id, updateStackDto);
+
+            expect(prisma.stack.findUnique).toHaveBeenCalledWith({where: {id: fakeStack.id}});
+            expect(prisma.stack.update).toHaveBeenCalledWith({
+                where: {id: fakeStack.id},
+                data: updateStackDto
+            });
+            expect(result).toEqual(updatedStack);
+        });
+
+        it('should throw NotFoundException if stack does not exist', async () => {
+            prisma.stack.findUnique.mockResolvedValue(null);
+
+            await expect(service.updateStackById(fakeStack.id, updateStackDto))
+                .rejects.toThrow(NotFoundException);
+            expect(prisma.stack.update).not.toHaveBeenCalled();
+        });
+    });
 });
