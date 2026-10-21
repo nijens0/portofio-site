@@ -61,4 +61,33 @@ describe('ProjectMediaService', () => {
     });
 
     afterEach(() => jest.clearAllMocks());
+
+    const createProjectMediaDto: CreateProjectMediaDto = {
+        type: media_type.PHOTO,
+        url: "url",
+        sort_order: 1,
+        caption: "main page",
+        project_id: 1
+    };
+
+    describe('createProjectMedia', () => {
+        it('should create project media and return ReadProjectMediaDto', async () => {
+            prisma.project.findUnique.mockResolvedValue(fakeProject);
+            prisma.project_media.create.mockResolvedValue(fakeProjectMedia);
+
+            const result = await service.createProjectMedia(createProjectMediaDto);
+
+            expect(prisma.project.findUnique).toHaveBeenCalledWith({where: {id: createProjectMediaDto.project_id}});
+            expect(prisma.project_media.create).toHaveBeenCalledWith({data: createProjectMediaDto});
+            expect(result).toEqual(fakeProjectMedia);
+        });
+
+        it('should throw NotFoundException if project does not exist', async () => {
+            prisma.project.findUnique.mockResolvedValue(null);
+
+            await expect(service.createProjectMedia(createProjectMediaDto)).rejects.toThrow(NotFoundException);
+
+            expect(prisma.project_media.create).not.toHaveBeenCalled();
+        });
+    });
 });
