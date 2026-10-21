@@ -49,4 +49,24 @@ describe('ProjectService', () => {
     });
 
     afterEach(() => jest.clearAllMocks());
+
+    const createProjectDto: CreateProjectDto = {
+        name: "Portfolio site",
+        slug: "portfolio",
+        preview_url: "url",
+        description: "fullstack project 'Portfolio site'",
+        work_started: new Date('2026-08-02'),
+        git: "https://github.com/nijens0"
+    };
+
+    describe('createProject', () => {
+        it('should create project and return ReadProjectDto', async () => {
+            prisma.project.create.mockResolvedValue(fakeProject);
+
+            const result = await service.createProject(createProjectDto);
+
+            expect(prisma.project.create).toHaveBeenCalledWith({data: createProjectDto});
+            expect(result).toEqual(fakeProject);
+        });
+    });
 });
