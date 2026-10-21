@@ -136,4 +136,26 @@ describe('ProjectService', () => {
             expect(prisma.project.delete).not.toHaveBeenCalled();
         });
     });
+
+    describe('deleteAllProjectMediaById', () => {
+        it('should delete all media of project and return count', async () => {
+            prisma.project.findUnique.mockResolvedValue(fakeProject);
+            prisma.project_media.deleteMany.mockResolvedValue({count: 3});
+
+            const result = await service.deleteAllProjectMediaById(fakeProject.id);
+
+            expect(prisma.project.findUnique).toHaveBeenCalledWith({where: {id: fakeProject.id}});
+            expect(prisma.project_media.deleteMany).toHaveBeenCalledWith({where: {project_id: fakeProject.id}});
+            expect(prisma.project.deleteMany).not.toHaveBeenCalled();
+            expect(result).toEqual(3);
+        });
+
+        it('should throw NotFoundException if project does not exist', async () => {
+            prisma.project.findUnique.mockResolvedValue(null);
+
+            await expect(service.deleteAllProjectMediaById(fakeProject.id)).rejects.toThrow(NotFoundException);
+            expect(prisma.project_media.deleteMany).not.toHaveBeenCalled();
+            expect(prisma.project.deleteMany).not.toHaveBeenCalled();
+        });
+    });
 });
