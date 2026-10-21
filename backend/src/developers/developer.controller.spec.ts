@@ -82,4 +82,14 @@ describe('DeveloperController', () => {
            expect(service.updateDeveloperById).toHaveBeenCalledWith(updated.id, dto);
        });
     });
+
+    describe('DELETE /developers/:id', () => {
+        it('should delete developer by id', async () => {
+            const returned: ReadDeveloperDto = {id: 1, name: 'Dima', surname: 'Mongolin', nickname: 'nijens0'};
+            service.deleteDeveloperById.mockResolvedValue(returned);
+
+            await expect(controller.deleteDeveloperById(String(returned.id))).resolves.toEqual(returned);
+            expect(service.deleteDeveloperById).toHaveBeenCalledWith(returned.id);
+        });
+    });
 });
