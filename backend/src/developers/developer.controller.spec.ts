@@ -68,4 +68,15 @@ describe('DeveloperController', () => {
            await expect(controller.readAllDevelopers()).resolves.toEqual(returned);
         });
     });
+
+    describe('PATCH /developers?id=id', () => {
+       it('should update developer by id', async () => {
+           const dto: UpdateDeveloperDto = {name: 'Dima'};
+           const updated: ReadDeveloperDto = {id: 1, name: 'Dima', surname: 'Mongolin', nickname: 'nijens0'};
+           service.updateDeveloperById.mockResolvedValue(updated);
+
+           await expect(controller.updateDeveloperById(String(updated.id), dto)).resolves.toEqual(updated);
+           expect(service.updateDeveloperById).toHaveBeenCalledWith(updated.id, dto);
+       });
+    });
 });
