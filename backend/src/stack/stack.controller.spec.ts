@@ -55,4 +55,20 @@ describe('StackController', () => {
             expect(service.readStackById).toHaveBeenCalledWith(returned.id);
         });
     });
+
+    describe('GET /stack', () => {
+        it('should get all stacks', async () => {
+            const returned: ReadStackDto[] = [
+                {id: 1, technology: 'NestJS'},
+                {id: 2, technology: 'Prisma'},
+                {id: 3, technology: 'PostgreSQL'},
+                {id: 4, technology: 'React'},
+                {id: 5, technology: 'Docker'}
+            ];
+            service.readAllStacks.mockResolvedValue(returned);
+
+            await expect(controller.readAllStacks()).resolves.toEqual(returned);
+            expect(service.readAllStacks).toHaveBeenCalled();
+        });
+    });
 });
