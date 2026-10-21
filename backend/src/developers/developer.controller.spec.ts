@@ -4,6 +4,7 @@ import {Test} from "@nestjs/testing";
 import {CreateDeveloperDto} from "./dto/create-developer.dto";
 import {ReadDeveloperDto} from "./dto/read-developer.dto";
 import {UpdateDeveloperDto} from "./dto/update-developer.dto";
+import {ReadProjectDto} from "../project/dto/read-project.dto";
 
 describe('DeveloperController', () => {
     let controller: DeveloperController;
@@ -15,7 +16,7 @@ describe('DeveloperController', () => {
         readAllDevelopers: jest.fn(),
         updateDeveloperById: jest.fn(),
         deleteDeveloperById: jest.fn(),
-        getDevelopersProjectById: jest.fn()
+        getDeveloperProjectsById: jest.fn()
     };
 
     beforeEach(async () => {
@@ -91,5 +92,45 @@ describe('DeveloperController', () => {
             await expect(controller.deleteDeveloperById(String(returned.id))).resolves.toEqual(returned);
             expect(service.deleteDeveloperById).toHaveBeenCalledWith(returned.id);
         });
+    });
+
+    describe('GET /developers/:id/projects', () => {
+       it("should get projects by developer's id", async () => {
+           const returned: ReadProjectDto[] = [
+               {
+                   id: 1,
+                   name: "GazpromNeft Vostok shift-scheduler",
+                   slug: "GNV-WEB",
+                   preview_url: "url",
+                   description: "frontend for shift scheduler system",
+                   work_started: new Date('2026-04-20'),
+                   is_featured: false,
+                   git: "https://github.com/nijens0"
+               },
+               {
+                   id: 2,
+                   name: "Portfolio site",
+                   slug: "portfolio",
+                   preview_url: "url",
+                   description: "fullstack project 'Portfolio site'",
+                   work_started: new Date('2026-08-02'),
+                   is_featured: false,
+                   git: "https://github.com/nijens0"
+               },
+               {
+                   id: 3,
+                   name: "scorm weigh batcher",
+                   slug: "scorm-weigh-batcher",
+                   preview_url: "",
+                   description: "",
+                   work_started: new Date('2026-09-16'),
+                   is_featured: false,
+                   git: "https://github.com/nijens0"
+               },
+           ];
+           service.getDeveloperProjectsById.mockResolvedValue(returned);
+
+           await expect(controller.getDeveloperProjectsById("1")).resolves.toEqual(returned);
+       });
     });
 });
