@@ -83,4 +83,22 @@ describe('ProjectMediaController', () => {
             expect(service.readAllProjectMediaByProjectId).toHaveBeenCalledWith(1);
         });
     });
+
+    describe('PATCH /project-media/:id', () => {
+        it('should update project media by id', async () => {
+            const dto: UpdateProjectMediaDto = {caption: "new main page", project_id: 1};
+            const updated: ReadProjectMediaDto = {
+                id: 1,
+                type: media_type.PHOTO,
+                url: "url",
+                sort_order: 1,
+                caption: "new main page",
+                project_id: 1
+            };
+            service.updateProjectMediaById.mockResolvedValue(updated);
+
+            await expect(controller.updateProjectMediaById(String(updated.id), dto)).resolves.toEqual(updated);
+            expect(service.updateProjectMediaById).toHaveBeenCalledWith(updated.id, dto);
+        });
+    });
 });
