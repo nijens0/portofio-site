@@ -52,4 +52,23 @@ describe('ProjectController', () => {
             expect(service.createProject).toHaveBeenCalledWith(dto);
         });
     });
+
+    describe('GET /projects/:id', () => {
+        it('should get project', async () => {
+            const returned: ReadProjectDto = {
+                id: 1,
+                name: "Portfolio site",
+                slug: "portfolio",
+                preview_url: "url",
+                description: "fullstack project 'Portfolio site'",
+                work_started: new Date('2026-08-02'),
+                is_featured: false,
+                git: "https://github.com/nijens0"
+            };
+            service.readProjectById.mockResolvedValue(returned);
+
+            await expect(controller.readProject(String(returned.id))).resolves.toEqual(returned);
+            expect(service.readProjectById).toHaveBeenCalledWith(returned.id);
+        });
+    });
 });
