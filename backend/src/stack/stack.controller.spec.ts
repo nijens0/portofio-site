@@ -71,4 +71,15 @@ describe('StackController', () => {
             expect(service.readAllStacks).toHaveBeenCalled();
         });
     });
+
+    describe('PATCH /stack/:id', () => {
+        it('should update stack by id', async () => {
+            const dto: UpdateStackDto = {technology: 'Express'};
+            const updated: ReadStackDto = {id: 1, technology: 'Express'};
+            service.updateStackById.mockResolvedValue(updated);
+
+            await expect(controller.updateStackById(String(updated.id), dto)).resolves.toEqual(updated);
+            expect(service.updateStackById).toHaveBeenCalledWith(updated.id, dto);
+        });
+    });
 });
