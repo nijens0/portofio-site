@@ -52,4 +52,21 @@ describe('ProjectMediaController', () => {
             expect(service.createProjectMedia).toHaveBeenCalledWith(dto);
         });
     });
+
+    describe('GET /project-media/:id', () => {
+        it('should get project media', async () => {
+            const returned: ReadProjectMediaDto = {
+                id: 1,
+                type: media_type.PHOTO,
+                url: "url",
+                sort_order: 1,
+                caption: "main page",
+                project_id: 1
+            };
+            service.readProjectMediaById.mockResolvedValue(returned);
+
+            await expect(controller.readProjectMediaById(String(returned.id))).resolves.toEqual(returned);
+            expect(service.readProjectMediaById).toHaveBeenCalledWith(returned.id);
+        });
+    });
 });
