@@ -34,4 +34,15 @@ describe('StackController', () => {
     it('should be defined', () => {
         expect(controller).toBeDefined();
     });
+
+    describe('POST /stack', () => {
+        it('should create stack', async () => {
+            const dto: CreateStackDto = {technology: 'NestJS'};
+            const created: ReadStackDto = {id: 1, ...dto};
+            service.createStack.mockResolvedValue(created);
+
+            await expect(controller.createStack(dto)).resolves.toEqual(created);
+            expect(service.createStack).toHaveBeenCalledWith(dto);
+        });
+    });
 });
