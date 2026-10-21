@@ -34,4 +34,22 @@ describe('ProjectController', () => {
     it('should be defined', () => {
         expect(controller).toBeDefined();
     });
+
+    describe('POST /projects', () => {
+        it('should create project', async () => {
+            const dto: CreateProjectDto = {
+                name: "Portfolio site",
+                slug: "portfolio",
+                preview_url: "url",
+                description: "fullstack project 'Portfolio site'",
+                work_started: new Date('2026-08-02'),
+                git: "https://github.com/nijens0"
+            };
+            const created = {id: 1, is_featured: false, ...dto} as ReadProjectDto;
+            service.createProject.mockResolvedValue(created);
+
+            await expect(controller.createProject(dto)).resolves.toEqual(created);
+            expect(service.createProject).toHaveBeenCalledWith(dto);
+        });
+    });
 });
