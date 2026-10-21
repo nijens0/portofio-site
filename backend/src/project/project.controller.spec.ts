@@ -110,4 +110,13 @@ describe('ProjectController', () => {
             expect(service.deleteProjectById).toHaveBeenCalledWith(returned.id);
         });
     });
+
+    describe('DELETE /projects/:id/media', () => {
+        it("should delete all media by project's id", async () => {
+            service.deleteAllProjectMediaById.mockResolvedValue(3);
+
+            await expect(controller.deleteAllProjectMediaById("1")).resolves.toEqual(3);
+            expect(service.deleteAllProjectMediaById).toHaveBeenCalledWith(1);
+        });
+    });
 });
