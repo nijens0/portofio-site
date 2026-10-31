@@ -65,13 +65,9 @@ export class ProjectService {
             throw new NotFoundException(`Project with id ${id} not found`);
         }
 
-        const batchPayload = await this.prisma.project.deleteMany({
+        const batchPayload = await this.prisma.project_media.deleteMany({
             where: {
-                project_media: {
-                    some: {
-                        project_id: id
-                    }
-                }
+                project_id: id
             }
         });
 

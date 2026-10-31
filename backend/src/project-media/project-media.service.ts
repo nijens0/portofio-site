@@ -51,7 +51,7 @@ export class ProjectMediaService {
     }
 
     async updateProjectMediaById(id: number, dto: UpdateProjectMediaDto) {
-        const projectMedia = this.prisma.project_media.findUnique({where: { id } });
+        const projectMedia = await this.prisma.project_media.findUnique({where: { id } });
 
         if (!projectMedia) {
             throw new NotFoundException(`Project media with id ${id} not found`);
